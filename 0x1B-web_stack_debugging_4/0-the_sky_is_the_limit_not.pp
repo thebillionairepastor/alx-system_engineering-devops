@@ -1,11 +1,6 @@
-# Fix ulimit request
-exec { 'ulimit':
-  command  => 'sed -i "s/ULIMIT=\"-n 15\"/ULIMIT=\"-n 2000\"/g" /etc/default/nginx',
-  provider => shell,
-}
+#Puppet file that fixes multiple server errors in Nginx server
 
-exec { 'restorenginx':
-  command  => 'service nginx restart',
-  provider => shell,
-  require  => Exec['ulimit'],
-}
+exec { 'fix_limit':
+  path     => ['/usr/bin', '/sbin', '/bin', '/usr/sbin'],
+  command  =>  "sed -i 's/ULIMIT=\"-n 15\"/ULIMIT=\"-n 3072\"/g' /etc/default/nginx; sudo service nginx restart",
+  provider =>  'shell'}
